@@ -14,7 +14,7 @@
 int generateTimeout(){
     std::random_device rd; 
     std::mt19937_64 gen(rd());
-    std::uniform_int_distribution<int> dist(150, 300);
+    std::uniform_int_distribution<int> dist(150, 300); // proposed timeouts from paper
 
     return std::chrono::milliseconds(dist(gen)).count();
 }
