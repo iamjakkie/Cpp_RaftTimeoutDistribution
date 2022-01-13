@@ -19,12 +19,11 @@ int generateTimeout(){
     return std::chrono::milliseconds(dist(gen)).count();
 }
 
-#templace to calculate every possible size of array
-int numberOfDuplicates(std::array<int, 5> arr){
+int numberOfDuplicates(std::vector<int> vec){
     int cnt = 0;
-    for(int i=0; i < 4; ++i){
+    for(int i=0; i < vec.size(); ++i){
         for(int j = 0; j < i; ++j){
-            if (arr[i] == arr[j] && i != j){
+            if (vec[i] == vec[j] && i != j){
                 cnt++;
             }
         }
@@ -35,17 +34,17 @@ int numberOfDuplicates(std::array<int, 5> arr){
 int main() {
 	int cnt = 0;
     int timeout;
-    std::vector<std::array<int, 5>> timeouts;
+    std::vector<std::vector<int>> timeouts;
     // std::map<int, std::vector<std::pair<int, int>> duplicates;
     
     int machines = 10;
     while(cnt < 1000){
-        std::array<int, machines+1> singleRun;
+        std::vector<int> singleRun;
         for(auto machineNo = 0; machineNo < machines; ++machineNo){
             timeout = generateTimeout();
-            singleRun[machineNo] = timeout;
+            singleRun.emplace_back(timeout);
         }
-        singleRun[machines] = numberOfDuplicates(singleRun);
+        singleRun.emplace_back(numberOfDuplicates(singleRun));
         timeouts.emplace_back(singleRun);
 
         cnt++;
@@ -54,15 +53,16 @@ int main() {
     int runNo = 1;
     int machineNo = 1;
     int totalDups = 0;
-    for(auto& arr:timeouts){
+    for(auto& run:timeouts){
+        std::cout << "=======" << std::endl;
         std::cout << "RUN NO: " << std::to_string(runNo++) << std::endl;
-        for(auto time:arr){
-            if(machineNo == 5){
-                std::cout << " DUPLICATES: " << std::to_string(time);
-                totalDups += time;
+        for(auto val:run){
+            if(machineNo == machines+1){
+                std::cout << " DUPLICATES: " << std::to_string(val);
+                totalDups += val;
                 continue;
             }
-            std::cout << "MACHINE NO: " << std::to_string(machineNo++) << " TIMEOUT: " << std::to_string(time) << " ";
+            std::cout << "    MACHINE NO: " << std::to_string(machineNo++) << " TIMEOUT: " << std::to_string(val) << std::endl;
         }
         std::cout << std::endl;
         machineNo = 1;
